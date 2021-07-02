@@ -78,4 +78,18 @@ class Db extends \Model
         }
     }
 
+    //YouTube動画情報を論理削除する
+    public static function delete_movieInfo($movieId)
+    {
+        try{
+            return $query = \DB::update('movie')->set(array(
+                'delete_flg' => 1
+            ))->where(array(
+                'movie_id' => $movieId
+            ))->execute();
+        }catch(Exception $e){
+            return null;
+        }
+    }
+
 }

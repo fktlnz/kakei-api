@@ -200,12 +200,40 @@ class Controller_Api extends Controller_Rest
         Log::debug('YouTube動画情報をを取得する');
         //ユーザーIDを取得する
         $movieId = Input::get('movieId');
-        Log::debug('$movieId:'.print_r($movieId,true));
+        $enableType = Input::get('enableType');
+        $enableTypeArr = explode(',', $enableType);
+        Log::debug('$enableTypeArr:'.print_r($enableTypeArr,true));
 
         $rst_array = array();
 
         if(empty($movieId)){
-            $movieInfo_all = Model_Movie::find('all');
+            $orQuery = array();
+            $arrTemp = array();
+            foreach($enableTypeArr as $key => $val) {
+                if((int)$key % 2 == 0){
+                    if(empty($arrTemp)){
+                        $arrTemp = array('category', $val);
+                    }else{
+                        $arrTemp = array(
+                            array('category', $val),
+                            'or' => $arrTemp
+                        );
+                    }
+                }else{
+                    $arrTemp = array(
+                        array('category', $val),
+                        'or' => array(
+                            $arrTemp
+                        )
+                    );
+                }
+            }
+            $movieInfo_all = Model_Movie::find('all', array(
+                'where' => array(
+                    array('delete_flg', 0),   
+                    $arrTemp               
+                )
+            ));
             foreach($movieInfo_all as $val){
                 Log::debug('$val:'.print_r($val,true));
                 array_push($rst_array, $val);
@@ -240,6 +268,48 @@ class Controller_Api extends Controller_Rest
             'ids' => array_column($movieInfo_all, 'movie_id')
         ));
 
+    }
+
+
+    // YouTube動画情報を論理削除する
+    public function get_deletemovieinfo()
+    {
+        $movieId = Input::get('movieId');
+
+        if(!empty($movieId)){
+
+            try{
+
+                $rst = Db::delete_movieInfo($movieId);
+                if($rst){
+                    return $this->response(array(
+                            'res' => "OK",
+                            'message' => '削除しました',
+                            'rst' => $rst
+                        ));
+                }else{
+                    return $this->response(array(
+                            'res' => "NG",
+                            'message' => '削除失敗',
+                            'rst' => $rst
+                        ));    
+                }
+
+            }catch(Exception $e) {
+                return $this->response(array(
+                        'res' => "NG",
+                        'message' => $e->getMessage(),
+                        'rst' => null
+                    ));
+            }
+            
+        }else{
+            return $this->response(array(
+                        'res' => "NG",
+                        'message' => 'get error',
+                        'rst' => null
+                    ));
+        }
     }
 
 }
