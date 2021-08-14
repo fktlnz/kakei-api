@@ -5,13 +5,14 @@ namespace Model;
 class Db extends \Model
 {
     //年収別、平均支出額を取得する
-    public static function get_financeInfo($income=null)
+    public static function get_financeInfo($income=null, $household=null)
     {
         try{           
             \Log::debug('年収別、平均支出額を取得する');
 
             return $query = \DB::select('food', 'residence', 'utility', 'medical', 'communication', 'education', 'entertainment')->from('finance')->where(array(
                 'income' => $income,
+                'household' => $household,
                 'delete_flg' => 0
             ))->execute()->as_array();
             
@@ -41,11 +42,12 @@ class Db extends \Model
     }
 
     //
-    public static function update_financeInfo($income, $food, $residence, $utility, $medical, $communication, $education, $entertainment)
+    public static function update_financeInfo($income, $household, $food, $residence, $utility, $medical, $communication, $education, $entertainment)
     {
         try{
             return $query = \DB::update('finance')->set(array(
                 'food' => $food,
+                'household' => $household,
                 'residence' => $residence,
                 'utility' => $utility,
                 'medical' => $medical,
@@ -86,6 +88,20 @@ class Db extends \Model
                 'delete_flg' => 1
             ))->where(array(
                 'movie_id' => $movieId
+            ))->execute();
+        }catch(Exception $e){
+            return null;
+        }
+    }
+
+    //年収別、平均支出額を論理削除する
+    public static function delete_financeInfo($id)
+    {
+        try{
+            return $query = \DB::update('finance')->set(array(
+                'delete_flg' => 1
+            ))->where(array(
+                'id' => $id
             ))->execute();
         }catch(Exception $e){
             return null;

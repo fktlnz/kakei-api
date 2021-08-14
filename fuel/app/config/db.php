@@ -27,15 +27,16 @@ return array(
     'pdo' => array(
         'type'           => 'pdo',
         'connection'     => array(
-            //'dsn'        => 'mysql:host=mysql1201b.xserver.jp;dbname=tnc001_mddb',
+            //'dsn'        => 'mysql:host=3.141.12.83;dbname=kakei',
              'dsn'        => 'mysql:host=127.0.0.1;dbname=kakei', //テスト環境
-            //'username'       => 'tnc001_mddb',
-            //'password'       => '7p3oYDysy',
+            //'username'       => 'root',
+            //'password'       => 'Yhe76xgt*',
             'username'       => 'root',
             'password'       => 'root',
             'persistent'     => false,
             'compress'       => false,
         ),
+        'identifier' => '`',
         'table_prefix' => '',
         'charset'      => 'utf8',
         'caching'      => false,

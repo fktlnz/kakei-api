@@ -8,6 +8,10 @@ class Model_Finance extends Orm\Model {
             'data_type'  => 'varchar',
             'label'      => '年収',
         ),
+        'household' => array(
+            'data_type'  => 'varchar',
+            'label'      => '世帯',
+        ),
         'food' => array(
             'data_type'  => 'varchar',
             'label'      => '食料',
